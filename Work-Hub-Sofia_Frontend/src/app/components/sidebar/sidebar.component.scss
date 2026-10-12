@@ -187,3 +187,30 @@
   flex-direction: column;
   height: 100%;
 }
+
+.mobile-close-button {
+  display: none;
+}
+
+@media (max-width: 991.98px) {
+  .navbar-vertical {
+    .container-fluid {
+      padding: 0.75rem 1rem;
+    }
+
+    .navbar-brand {
+      margin: 0 auto;
+    }
+
+    .mobile-close-button {
+      display: block;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      border: 0;
+      background: transparent;
+      color: #ec8b00;
+      font-size: 1.1rem;
+    }
+  }
+}

@@ -1,4 +1,5 @@
-<nav class="navbar navbar-vertical navbar-expand-md navbar-light bg-white" id="sidenav-main" [class.minimized]="minimized">
+<nav class="navbar navbar-vertical navbar-expand-md navbar-light bg-white"
+     id="sidenav-main" [class.minimized]="minimized" [class.mobile-open]="mobileOpen">
   <div class="container-fluid">
     <button class="navbar-toggler" type="button" (click)="isCollapsed=!isCollapsed"
             aria-controls="sidenav-collapse-main">
@@ -68,6 +69,10 @@
               <span></span>
               <span></span>
             </button>
+            <button type="button" class="mobile-close-button" (click)="closeMobile()"
+                    aria-label="Fermer le menu">
+              <i class="fas fa-times"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -83,7 +88,8 @@
       </form>
       <ul class="navbar-nav">
         <li *ngFor="let menuItem of menuItems" class="{{menuItem.class}} nav-item">
-          <a routerLinkActive="active" [routerLink]="[menuItem.path]" class="nav-link">
+          <a routerLinkActive="active" [routerLink]="[menuItem.path]" class="nav-link"
+             (click)="closeMobile()">
             <i class="ni {{menuItem.icon}}"></i>
             <span class="nav-link-text">{{menuItem.title}}</span>
           </a>

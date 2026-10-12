@@ -36,7 +36,9 @@ export const ROUTES: RouteInfo[] = [
 })
 export class SidebarComponent implements OnInit {
   @Input() minimized = false;
+  @Input() mobileOpen = false;
   @Output() onToggleSidebar = new EventEmitter<void>();
+  @Output() onCloseMobile = new EventEmitter<void>();
   public menuItems: RouteInfo[] = [];
   public isCollapsed = true;
   currentUserRole = '';
@@ -54,6 +56,7 @@ export class SidebarComponent implements OnInit {
 
     this.router.events.subscribe(() => {
       this.isCollapsed = true;
+      this.onCloseMobile.emit();
     });
   }
 
@@ -71,5 +74,9 @@ export class SidebarComponent implements OnInit {
 
   toggleSidebar() {
     this.onToggleSidebar.emit();
+  }
+
+  closeMobile() {
+    this.onCloseMobile.emit();
   }
 }

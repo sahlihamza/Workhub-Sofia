@@ -10,6 +10,7 @@ import {Subscription} from "rxjs";
 export class AdminLayoutComponent implements OnInit {
   @HostBinding('class.sidebar-minimized')
   public isSidebarMinimized = false;
+  public isMobileSidebarOpen = false;
   private layoutSub: Subscription;
   constructor(private layoutService: LayoutService) { }
 
@@ -28,6 +29,14 @@ export class AdminLayoutComponent implements OnInit {
   toggleSidebar() {
     this.isSidebarMinimized = !this.isSidebarMinimized;
     this.layoutService.toggleSidebar();
+  }
+
+  toggleMobileSidebar() {
+    this.isMobileSidebarOpen = !this.isMobileSidebarOpen;
+  }
+
+  closeMobileSidebar() {
+    this.isMobileSidebarOpen = false;
   }
 
 }

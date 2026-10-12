@@ -1,4 +1,16 @@
-<app-sidebar [minimized]="isSidebarMinimized" (onToggleSidebar)="toggleSidebar()"></app-sidebar>
+<app-sidebar
+  [minimized]="isSidebarMinimized"
+  [mobileOpen]="isMobileSidebarOpen"
+  (onToggleSidebar)="toggleSidebar()"
+  (onCloseMobile)="closeMobileSidebar()">
+</app-sidebar>
+
+<button class="mobile-menu-button" type="button" (click)="toggleMobileSidebar()"
+        aria-label="Ouvrir le menu">
+  <i class="fas fa-bars"></i>
+</button>
+<div class="mobile-sidebar-backdrop" [class.visible]="isMobileSidebarOpen"
+     (click)="closeMobileSidebar()"></div>
 
 <!-- Collapse button lives outside sidebar -->
 <div class="sidebar-toggler" (click)="toggleSidebar()">
