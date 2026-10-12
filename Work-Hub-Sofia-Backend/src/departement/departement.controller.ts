@@ -1,0 +1,59 @@
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Logger, ParseIntPipe,
+} from '@nestjs/common';
+import { DepartementService } from './departement.service';
+import { CreateDepartementDto } from './dto/create-departement.dto';
+import { UpdateDepartementDto } from './dto/update-departement.dto';
+
+@Controller('departement')
+export class DepartementController {
+  constructor(private readonly departementService: DepartementService) {}
+
+  @Post()
+  create(@Body() createDepartementDto: CreateDepartementDto) {
+    Logger.log('--- DTO received in controller ---');
+    Logger.log(createDepartementDto);
+    Logger.log(
+      `Type of responsableId: ${typeof createDepartementDto.responsableId}`,
+    );
+    return this.departementService.create(createDepartementDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.departementService.findAll();
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.departementService.findOne(+id);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateDepartementDto: UpdateDepartementDto,
+  ) {
+    return this.departementService.update(+id, updateDepartementDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.departementService.remove(+id);
+  }
+
+  @Patch(':id/set-head')
+  setDepartmentHead(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('newHeadId', ParseIntPipe) newHeadId: number,
+  ) {
+    return this.departementService.setDepartmentHead(id, newHeadId);
+  }
+}

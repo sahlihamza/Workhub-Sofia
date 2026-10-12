@@ -1,0 +1,75 @@
+// admin-layout.component.scss
+
+:host {
+  // Define variables for sidebar widths
+  --sidebar-width-expanded: 250px;
+  --sidebar-width-minimized: 70px;
+
+  // Style the child sidebar component from the parent
+  // This ensures the sidebar is fixed to the left side of the screen
+  ::ng-deep app-sidebar .navbar-vertical {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width-expanded);
+    z-index: 100; // Keep sidebar above content
+    transition: width 0.2s ease-in-out;
+  }
+
+  // Set the left margin on the main content area to make space for the sidebar
+  .main-content {
+    margin-left: var(--sidebar-width-expanded);
+    transition: margin-left 0.2s ease-in-out;
+    position: relative;
+    z-index: 1;
+  }
+
+  // WHEN THE SIDEBAR IS MINIMIZED...
+  &.sidebar-minimized {
+    // ...shrink the sidebar's width
+    ::ng-deep app-sidebar .navbar-vertical {
+      width: var(--sidebar-width-minimized);
+    }
+
+    // ...and shrink the main content's margin
+    .main-content {
+      margin-left: var(--sidebar-width-minimized);
+    }
+  }
+}
+.sidebar-toggler {
+  position: fixed;
+  top: 50%;
+  left: var(--sidebar-width-expanded);
+  transform: translateY(-50%);
+  z-index: 2000;
+  width: 28px;
+  height: 40px; /* taller so it feels like part of the edge */
+  border-radius: 0 8px 8px 0; /* rounded only on right side */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+
+  background: #ffffff; /* match sidebar background */
+  border-left: 1px solid #f0f0f0; /* subtle separation */
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.08); /* slight shadow to lift it */
+}
+
+.sidebar-toggler i {
+  font-size: 0.9rem;
+  color: #ec8b00; /* your accent color */
+  pointer-events: none;
+}
+
+.sidebar-toggler:hover {
+  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Adjust when minimized */
+:host.sidebar-minimized .sidebar-toggler {
+  left: var(--sidebar-width-minimized);
+}

@@ -1,0 +1,157 @@
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
+    style="min-height: 200px; background-image: url(assets/img/theme/ST.png); background-size: cover; background-position: center top;">
+    <span class="mask bg-primary opacity-8"></span>
+    <div class="container-fluid d-flex align-items-center">
+        <div class="row">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+    <div class="row">
+        <div class="col-xl-12 order-xl-1">
+            <div class="card bg-secondary shadow">
+                <div class="card-header bg-white border-0">
+                    <div class="row align-items-center">
+                        <div class="solde-badge">
+                            <i class="fas fa-wallet"></i> solde de congé : {{ soldeConge }} jours
+                        </div>
+
+                        <div class="solde-badge">
+                            <i class="fas fa-wallet"></i> solde de congé maladie : {{ soldeCongeMaladie }}
+                            jours
+                        </div>
+                        <div class="solde-badge">
+                            <i class="fas fa-wallet"></i> solde de compensation : {{ soldeCompensation }}
+                            jours
+                        </div>
+                        <div class="col-12 d-flex align-items-center justify-content-between">
+                            <h3 class="mb-0">Créer une nouvelle demande de congé</h3>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form (ngSubmit)="createDemande()" #demandeForm="ngForm" novalidate>
+                        <h6 class="heading-small text-muted mb-4">Informations de la demande</h6>
+
+                        <!-- Message d’erreur global -->
+                        <div *ngIf="messageErreur" class="alert alert-danger mt-3">
+                            {{ messageErreur }}
+                        </div>
+
+                        <!-- Message de succès -->
+                        <div *ngIf="messageSuccess" class="alert alert-success mt-3">
+                            {{ messageSuccess }}
+                        </div>
+
+                        <div class="pl-lg-4">
+
+                            <div class="row">
+                                <!-- Date de début -->
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="dateDebut">Date de début</label>
+                                        <input type="date" id="dateDebut" name="dateDebut" [(ngModel)]="dateDebut"
+                                            class="form-control form-control-alternative" required
+                                            #dateDebutRef="ngModel" [min]="today">
+                                        <div class="text-danger mt-1"
+                                            *ngIf="!formSubmittedSuccessfully && dateDebutRef.invalid && dateDebutRef.touched">
+                                            La date de début est requise.
+                                        </div>
+
+                                        <!-- Checkbox Demi-journée début -->
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input" type="checkbox" id="demiJourDebut"
+                                                [(ngModel)]="demiJourDebut" name="demiJourDebut" />
+                                            <label class="form-check-label" for="demiJourDebut">
+                                                Demi-journée début
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Date de fin -->
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="dateFin">Date de fin</label>
+                                        <input type="date" id="dateFin" name="dateFin" [(ngModel)]="dateFin"
+                                            class="form-control form-control-alternative" required #dateFinRef="ngModel"
+                                            [min]="dateDebut || today">
+                                        <div class="text-danger mt-1"
+                                            *ngIf="!formSubmittedSuccessfully && dateFinRef.invalid && dateFinRef.touched">
+                                            La date de fin est requise.
+                                        </div>
+
+                                        <!-- Checkbox Demi-journée fin -->
+                                        <div class="form-check mt-2">
+                                            <input class="form-check-input" type="checkbox" id="demiJourFin"
+                                                [(ngModel)]="demiJourFin" name="demiJourFin" />
+                                            <label class="form-check-label" for="demiJourFin">
+                                                Demi-journée fin
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label><strong>Durée sélectionnée :</strong></label>
+                                <p>
+                                    <span *ngIf="dureeCalculee !== null" class="text-success font-weight-bold">
+                                        {{ dureeCalculee }} jour(s)
+                                    </span>
+                                    <span *ngIf="dureeCalculee === null" class="text-muted">-</span>
+
+                                    <!-- Ajout du résultat de ta fonction -->
+                                    <span class="ml-2 text-info">
+                                        {{ calculerDuree() }}
+                                    </span>
+                                </p>
+                            </div>
+
+
+                            <div class="row">
+                                <!-- Type de congé -->
+                                <div class="form-group col-md-6">
+                                    <label for="type">Type de congé</label>
+                                    <select id="type" name="type" [(ngModel)]="type"
+                                        class="form-control form-control-alternative" required #typeRef="ngModel">
+                                        <option value="">-- Sélectionner un type --</option>
+                                        <option *ngFor="let t of typesConge" [value]="t">{{ formatType(t) }}</option>
+                                    </select>
+                                    <div class="text-danger mt-1"
+                                        *ngIf="!formSubmittedSuccessfully && typeRef.invalid && typeRef.touched">
+                                        Le type de congé est requis.
+                                    </div>
+                                </div>
+
+                                <!-- Cause -->
+                                <div class="form-group col-md-6">
+                                    <label for="cause">Cause</label>
+                                    <textarea id="cause" name="cause" [(ngModel)]="cause"
+                                        class="form-control form-control-alternative" rows="3" required
+                                        #causeRef="ngModel"></textarea>
+                                    <div class="text-danger mt-1"
+                                        *ngIf="!formSubmittedSuccessfully && causeRef.invalid && causeRef.touched">
+                                        La cause est requise.
+                                    </div>
+                                </div>
+                            </div>
+
+
+                          <div class="row mt-4">
+    <div class="col-12 d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary btn-lg" [disabled]="demandeForm.invalid">
+            Envoyer la demande
+        </button>
+    </div>
+</div>
+
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+{
+  "sidebar": {
+    "dashboard": "Tableau de bord",
+    "users": "Utilisateurs",
+    "addUser": "Ajouter utilisateur",
+    "manageDepartments": "Gérer Départements",
+    "manageTeams": "Gérer Équipes",
+    "managePositions": "Gérer Postes",
+    "planning": "Planning",
+    "managePlannings": "Gérer Plannings",
+    "leaveRequests": "Demandes de congé",
+    "manageRequests": "Gérer demandes",
+    "manageCompensation": "Gérer compensation"
+  }
+}

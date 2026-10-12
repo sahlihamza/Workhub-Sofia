@@ -1,0 +1,185 @@
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 200px; background-image: url(assets/img/theme/ST.png); background-size: cover; background-position: center top;">
+  <span class="mask bg-primary opacity-8"></span>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col">
+              <h3 class="mb-0">Global Planning View</h3>
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-sm btn-neutral" (click)="toggleFilters()">
+                <i class="fas fa-filter mr-2"></i> {{ showFilters ? 'Hide' : 'Show' }} Filters
+              </button>
+            </div>
+            <div class="col-auto">
+              <button *ngIf="currentUser?.role === 'superadmin'" (click)="downloadPlanningReport()" class="btn btn-sm btn-primary">
+                Export
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-container" [class.expanded]="showFilters">
+            <hr class="mt-3 mb-3"/>
+            <div class="row">
+              <div class="col-lg-4">
+                <div class="form-group mb-0">
+                  <input type="text" class="form-control form-control-alternative" placeholder="Search by name..."
+                         [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()">
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="form-group mb-0">
+                  <select class="form-control form-control-alternative" [(ngModel)]="selectedDepartmentId" (ngModelChange)="applyFilters()">
+                    <option [ngValue]="null">Filter by Department...</option>
+                    <option *ngFor="let dept of allDepartments" [ngValue]="dept.id">{{ dept.nomDepartement }}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="form-group mb-0">
+                  <select class="form-control form-control-alternative" [(ngModel)]="selectedTeamId" (ngModelChange)="applyFilters()">
+                    <option [ngValue]="null">Filter by Team...</option>
+                    <option *ngFor="let team of allTeams" [ngValue]="team.id">{{ team.nomEquipe }}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group mt-3 mb-0">
+            <select class="form-control form-control-alternative" [(ngModel)]="selectedUserId" (ngModelChange)="onUserChange()">
+              <option [ngValue]="null" disabled>Select a user from the filtered list to view their planning...</option>
+              <option *ngFor="let user of allUsers" [ngValue]="user.id">{{ user.prenom }} {{ user.nom }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body">
+          <div *ngIf="selectedUserId; else noUserSelected">
+            <div class="calendar-container">
+              <div class="calendar-header">
+                <button (click)="previousMonth()" class="btn btn-sm btn-primary">
+                  <i class="ni ni-bold-left"></i>
+                </button>
+
+                <div class="text-center flex-grow-1">
+                  <h3 class="mb-0">{{ getMonthYearString() }}</h3>
+                  <div *ngIf="activeCampaigns.length > 0" class="mt-2">
+                    <span class="badge badge-pill badge-secondary font-weight-600">
+                      <i class="ni ni-chart-bar-32 mr-2"></i>
+                      <ng-container *ngFor="let campaign of activeCampaigns; let isLast = last">
+                        <span [style.color]="campaignColors[campaign.id % campaignColors.length]" class="font-weight-bold">{{ campaign.name }}</span>
+                        <span *ngIf="!isLast" class="mx-1 text-muted">/</span>
+                      </ng-container>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="calendar-header-right">
+                  <button (click)="toggleFullscreen()"
+                          class="btn btn-sm btn-primary btn-icon-only btn-rounded"
+                          [title]="isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'">
+
+                    <img [src]="isFullscreen ? 'assets/img/icons/exit-full-screen.png' : 'assets/img/icons/full-screen.png'"
+                         alt="Fullscreen Toggle"
+                         style="width: 20px; height: 20px; object-fit: contain;">
+
+                  </button>
+                  <button *ngIf="!isCurrentMonthView()" (click)="goToToday()" class="btn btn-sm btn-secondary">
+                    Today
+                  </button>
+                  <button (click)="nextMonth()" class="btn btn-sm btn-primary">
+                    <i class="ni ni-bold-right"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="calendar-horizontal" #scrollContainer>
+                <div *ngFor="let day of calendarDays"
+                     class="calendar-day"
+                     [class.today]="isToday(day.date)"
+                     [class.present]="day.entry?.status === 'present'"
+                     [class.remote]="day.entry?.status === 'remote'"
+                     [class.holiday]="day.entry?.status === 'holiday'"
+                     [class.weekend]="isWeekend(day.date)"
+                     [class.past-day]="isPastDay(day.date)"
+                     (click)="!isPastDay(day.date) && day.entry?.status !== 'holiday' && !isWeekend(day.date) && selectDate(day.date)">
+
+                  <div *ngIf="day.campaignColor"
+                       class="campaign-dot"
+                       [style.backgroundColor]="day.campaignColor"
+                       [ngbTooltip]="getCampaignTooltip(day.date)">
+                  </div>
+
+                  <div class="day-info">
+                    <div class="day-name">{{ day.date | date:'EEE' }}</div>
+                    <div class="day-number">{{ day.date.getDate() }}</div>
+                  </div>
+
+                  <div class="status-display" *ngIf="day.entry">
+                    <span *ngIf="day.entry.status === 'present'" class="badge badge-pill badge-success">On Site</span>
+                    <span *ngIf="day.entry.status === 'remote'" class="badge badge-pill badge-info">Remote</span>
+                    <span *ngIf="day.entry.status === 'holiday'" class="badge badge-pill badge-warning">In Holiday</span>
+                  </div>
+
+                  <div *ngIf="day.entry?.notes" class="note-indicator" [ngbTooltip]="day.entry.notes">
+                    <i class="ni ni-collection"></i>
+                  </div>
+
+                  <div *ngIf="!isWeekend(day.date) && !isPastDay(day.date) && day.entry?.status !== 'holiday'" class="hover-options">
+                    <button class="btn btn-sm btn-icon-only btn-rounded btn-success" (click)="setStatus(day.date, 'present', $event)" title="On Site">
+                      <i class="ni ni-building"></i>
+                    </button>
+                    <button class="btn btn-sm btn-icon-only btn-rounded btn-info" (click)="setStatus(day.date, 'remote', $event)" title="Remote">
+                      <i class="ni ni-laptop"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-template #noUserSelected>
+            <p class="text-center py-5">Please select a user to view their schedule.</p>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #editModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{ selectedDate | date:'fullDate' }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label class="form-control-label">Status</label>
+      <div class="status-options">
+        <div class="custom-control custom-radio mb-3">
+          <input type="radio" id="statusPresentModal" class="custom-control-input" [(ngModel)]="selectedStatus" name="status" value="present">
+          <label class="custom-control-label" for="statusPresentModal">On Site</label>
+        </div>
+        <div class="custom-control custom-radio">
+          <input type="radio" id="statusRemoteModal" class="custom-control-input" [(ngModel)]="selectedStatus" name="status" value="remote">
+          <label class="custom-control-label" for="statusRemoteModal">Remote</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-control-label" for="notes">Notes (optional)</label>
+      <textarea id="notes" class="form-control form-control-alternative" [(ngModel)]="notes" rows="3"></textarea>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="deleteEntry()">Delete</button>
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss('cancel click')">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="saveStatus()">Save</button>
+  </div>
+</ng-template>

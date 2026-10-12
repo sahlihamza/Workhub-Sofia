@@ -1,0 +1,124 @@
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 200px; background-image: url(assets/img/theme/ST.png); background-size: cover; background-position: center top;">
+  <span class="mask bg-primary opacity-8"></span>
+</div>
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12 mb-4">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <h3 class="mb-0">{{ isEditing ? 'Edit Campaign' : 'Create New Campaign' }}</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="campaignForm" (ngSubmit)="onSubmit()">
+            <h6 class="heading-small text-muted mb-4">Campaign Information</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-campaign-name">Campaign Name</label>
+                    <input type="text" id="input-campaign-name" class="form-control form-control-alternative" formControlName="name" [class.is-invalid]="campaignForm.get('name')?.invalid && (campaignForm.get('name')?.touched || submitted)">
+                    <div *ngIf="campaignForm.get('name')?.invalid && (campaignForm.get('name')?.touched || submitted)" class="text-danger mt-1">
+                      This field is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-campaign-description">Description</label>
+                    <textarea id="input-campaign-description" class="form-control form-control-alternative" formControlName="description" rows="1"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-start-date">Start Date</label>
+                    <div class="input-group">
+                      <input class="form-control form-control-alternative" placeholder="yyyy-mm-dd" id="input-start-date"
+                             name="dp1" formControlName="startDate" ngbDatepicker #d1="ngbDatepicker"
+                             [class.is-invalid]="campaignForm.get('startDate')?.invalid && (campaignForm.get('startDate')?.touched || submitted)"
+                             [markDisabled]="isDateDisabled" [minDate]="minDate" readonly>
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-primary" (click)="d1.toggle()" type="button">
+                          <i class="ni ni-calendar-grid-58"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div *ngIf="campaignForm.get('startDate')?.invalid && (campaignForm.get('startDate')?.touched || submitted)" class="text-danger mt-1">
+                      This field is required.
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-end-date">End Date</label>
+                    <div class="input-group">
+                      <input class="form-control form-control-alternative" placeholder="yyyy-mm-dd" id="input-end-date"
+                             name="dp2" formControlName="endDate" ngbDatepicker #d2="ngbDatepicker"
+                             [class.is-invalid]="campaignForm.get('endDate')?.invalid && (campaignForm.get('endDate')?.touched || submitted)"
+                             [markDisabled]="isDateDisabled"
+                             [minDate]="campaignForm.get('startDate').value || minDate"
+                             [maxDate]="maxEndDate" readonly>
+                      <div class="input-group-append">
+                        <button class="btn btn-outline-primary" (click)="d2.toggle()" type="button">
+                          <i class="ni ni-calendar-grid-58"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div *ngIf="campaignForm.get('endDate')?.invalid && (campaignForm.get('endDate')?.touched || submitted)" class="text-danger mt-1">
+                      This field is required.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary my-4" [disabled]="campaignForm.invalid">
+              {{ isEditing ? 'Update' : 'Create' }}
+            </button>
+            <button type="button" class="btn btn-secondary my-4" (click)="resetForm()" *ngIf="isEditing">Cancel</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-12">
+    <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Campaigns List</h3>
+            <input type="text" class="form-control form-control-alternative w-50" placeholder="Search by name..." [(ngModel)]="searchTerm" (ngModelChange)="applyFilter()">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Dates</th>
+              <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let campaign of filteredCampaigns | paginate: { itemsPerPage: 5, currentPage: p }">
+              <td>{{ campaign.name }}</td>
+              <td [ngbTooltip]="campaign.description">{{ campaign.description | slice:0:20 }}{{ campaign.description.length > 50 ? '...' : '' }}</td>
+              <td>{{ campaign.startDate | date:'mediumDate' }} - {{ campaign.endDate | date:'mediumDate' }}</td>
+              <td>
+                <button (click)="editCampaign(campaign)" class="btn btn-sm btn-primary">Edit</button>
+                <button (click)="deleteCampaign(campaign)" class="btn btn-sm btn-danger">Delete</button>
+              </td>
+            </tr>
+            <tr *ngIf="filteredCampaigns.length === 0">
+              <td colspan="4" class="text-center">No campaigns found.</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer py-4 d-flex justify-content-end" *ngIf="filteredCampaigns.length > 5">
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

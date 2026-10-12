@@ -1,0 +1,48 @@
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
+    style="min-height: 200px; background-image: url(assets/img/theme/ST.png); background-size: cover; background-position: center top;">
+    <span class="mask bg-primary opacity-8"></span>
+    <div class="container-fluid d-flex align-items-center">
+        <div class="row">
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <h3>Ajouter des jours de compensation</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="userSelect" class="form-label">Sélectionner un utilisateur</label>
+              <select id="userSelect"
+                      class="form-select w-100 custom-select-filter"
+                      [(ngModel)]="selectedUserId">
+                <option [ngValue]="null">-- Sélectionner --</option>
+                <option *ngFor="let user of users" [ngValue]="user.id">
+                  {{ user.prenom }} {{ user.nom }} (Solde actuel: {{ user.soldeCompensation }})
+                </option>
+              </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label for="daysInput" class="form-label">Nombre de jours à ajouter</label>
+              <input type="number" id="daysInput" class="form-control" [(ngModel)]="daysToAdd" min="1">
+            </div>
+          </div>
+          <div class="text-center mt-4">
+            <button class="btn btn-primary px-4" (click)="ajouterCompensation()">Ajouter</button>
+          </div>
+
+        
+          <div *ngIf="messageSuccess" class="alert alert-success mt-3 text-center">{{ messageSuccess }}</div>
+          <div *ngIf="messageErreur" class="alert alert-danger mt-3 text-center">{{ messageErreur }}</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

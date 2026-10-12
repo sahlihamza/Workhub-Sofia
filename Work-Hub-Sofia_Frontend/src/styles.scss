@@ -1,0 +1,49 @@
+/* You can add global styles to this file, and also import other style files */
+
+ngb-modal-window {
+  z-index: 1051 !important;
+}
+
+ngb-modal-backdrop {
+  z-index: 1050 !important;
+}
+
+.disabled-wrapper {
+  pointer-events: none;
+}
+
+// Force a smaller size on ngx-pagination controls
+ul.ngx-pagination li.page-item a.page-link,
+ul.ngx-pagination li.page-item span.page-link {
+  padding: 0.5rem 0.75rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+}
+
+// Style for the active page
+ul.ngx-pagination li.page-item.current .page-link {
+  background-color: #ec8b00 !important;
+  border-color: #ec8b00 !important;
+}
+
+
+ngb-datepicker .ngb-dp-arrow .btn-link {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: none;
+  background-color: transparent;
+  transition: background-color 0.2s ease-in-out;
+
+  /* This is the key fix: it removes the default blue ring that appears on click/focus */
+  &:focus, &.focus {
+    box-shadow: none !important;
+    outline: none !important;
+  }
+}
+
+// Define the clean hover effect
+ngb-datepicker .ngb-dp-arrow .btn-link:hover {
+  background-color: #f6f9fc;
+  border: none;
+}

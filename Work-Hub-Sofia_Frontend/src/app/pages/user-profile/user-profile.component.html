@@ -1,0 +1,97 @@
+<div class="header bg-warning pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 400px;">
+  <!-- Header container -->
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+      <div class="col-lg-7 col-md-10">
+        <h1 class="display-2 text-white">Bonjour {{ user?.nom }}</h1>
+        <p class="text-white mt-0 mb-5">
+          Ceci est votre page de profil. Vous pouvez gérer votre compte.
+        </p>
+        <button type="button" class="btn btn-info"  (click)="onEditProfile()">Modifier le profil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    
+    <div class="col-xl-12 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-12 d-flex align-items-center justify-content-between ">
+              <h3 class="mb-0">Mon compte</h3>
+              <div class="solde-badge mt-2">
+    <i class="fas fa-wallet"></i> Votre solde de congé : {{ user?.soldeConge ?? 0 }} jours
+  </div>
+            </div>
+            <div class="col-4 text-right">
+              <!-- <a href="#!" class="btn btn-sm btn-primary">Settings</a> -->
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form>
+            <h6 class="heading-small text-muted mb-4">Informations utilisateur</h6>
+            <div class="pl-lg-4" *ngIf="user">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-nom">Nom</label>
+                    <input type="text" id="input-nom" class="form-control form-control-alternative" [value]="user.nom"
+                      readonly>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-prenom">Prénom</label>
+                    <input type="text" id="input-prenom" class="form-control form-control-alternative"
+                      [value]="user.prenom" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-email">Email</label>
+                    <input type="email" id="input-email" class="form-control form-control-alternative"
+                      [value]="user.email" readonly>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-role">Rôle</label>
+                    <input type="text" id="input-role" class="form-control form-control-alternative" [value]="user.role"
+                      readonly>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-numero">Numéro</label>
+                    <input type="text" id="input-numero" class="form-control form-control-alternative"
+       readonly value="{{ user.numero ?? '' }}">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div class="col-4 text-right">
+              <button type="button" class="btn btn-sm btn-primary" (click)="onEditProfile()">Modifier</button>
+            </div> -->
+
+
+            <div *ngIf="!user" class="text-center mt-3 text-danger">
+              Chargement des informations...
+            </div>
+
+            
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

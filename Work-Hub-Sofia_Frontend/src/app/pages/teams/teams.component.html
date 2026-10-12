@@ -1,0 +1,239 @@
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 200px; background-image: url(assets/img/theme/ST.png); background-size: cover; background-position: center top;">
+  <span class="mask bg-primary opacity-8"></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">{{ isEditing ? 'Edit Team' : 'Create New Team' }}</h3>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
+            <h6 class="heading-small text-muted mb-4">Team Information</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-team-name">Team Name</label>
+                    <input type="text" id="input-team-name" class="form-control form-control-alternative"
+                           formControlName="nomEquipe"
+                           [class.is-invalid]="teamForm.get('nomEquipe')?.invalid && teamForm.get('nomEquipe')?.touched">
+
+                    <div *ngIf="teamForm.get('nomEquipe')?.invalid && teamForm.get('nomEquipe')?.touched"
+                         class="text-danger mt-1">
+                      <small *ngIf="teamForm.get('nomEquipe')?.hasError('required')">
+                        Team name is required.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-team-description">Description</label>
+                    <input type="text" id="input-team-description" class="form-control form-control-alternative"
+                           formControlName="descriptionEquipe"
+                           [class.is-invalid]="teamForm.get('descriptionEquipe')?.invalid && teamForm.get('descriptionEquipe')?.touched">
+
+                    <div *ngIf="teamForm.get('descriptionEquipe')?.invalid && teamForm.get('descriptionEquipe')?.touched"
+                         class="text-danger mt-1">
+                      <small *ngIf="teamForm.get('descriptionEquipe')?.hasError('required')">
+                        Description is required.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-department">Parent Department</label>
+                    <select id="select-department" class="form-control form-control-alternative"
+                            formControlName="departementId"
+                            [class.is-invalid]="teamForm.get('departementId')?.invalid && teamForm.get('departementId')?.touched">
+                      <option [ngValue]="null" disabled>Select a department</option>
+                      <option *ngFor="let dept of departments" [value]="dept.id">
+                        {{ dept.nomDepartement }}
+                      </option>
+                    </select>
+
+                    <div *ngIf="teamForm.get('departementId')?.invalid && teamForm.get('departementId')?.touched"
+                         class="text-danger mt-1">
+                      <small *ngIf="teamForm.get('departementId')?.hasError('required')">
+                        Parent department is required.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-lead">Team Lead</label>
+                    <select id="select-lead" class="form-control form-control-alternative"
+                            formControlName="responsableEquipeId"
+                            [class.is-invalid]="teamForm.get('responsableEquipeId')?.invalid && teamForm.get('responsableEquipeId')?.touched">
+                      <option [ngValue]="null" disabled>Select a Team Lead</option>
+                      <option *ngFor="let user of users" [value]="user.id">
+                        {{ user.prenom }} {{ user.nom }}
+                      </option>
+                    </select>
+
+                    <div *ngIf="teamForm.get('responsableEquipeId')?.invalid && teamForm.get('responsableEquipeId')?.touched"
+                         class="text-danger mt-1">
+                      <small *ngIf="teamForm.get('responsableEquipeId')?.hasError('required')">
+                        Team lead is required.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="d-inline-block" [ngbTooltip]="!isEditing && isCreateDisabled ? tooltipMessage : null" placement="top">
+      <button type="submit" class="btn btn-primary my-4"
+              [disabled]="teamForm.invalid || (!isEditing && isCreateDisabled)"
+              [class.disabled-wrapper]="!isEditing && isCreateDisabled">
+        {{ isEditing ? 'Update' : 'Create' }}
+      </button>
+    </span>
+            <button type="button" class="btn btn-secondary my-4" (click)="resetForm()" *ngIf="isEditing">Cancel</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card shadow mt-4">
+        <div class="card-header border-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Team List</h3>
+            <input type="text" class="form-control form-control-alternative w-25"
+                   placeholder="Search by name..."
+                   [(ngModel)]="searchTerm"
+                   (ngModelChange)="applyFilter()">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Members</th>
+              <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let team of filteredTeams | paginate: { itemsPerPage: 10, currentPage: p }">
+              <td>{{ team.nomEquipe }}</td>
+              <td [ngbTooltip]="team.descriptionEquipe">{{ team.descriptionEquipe | slice:0:50 }}{{ team.descriptionEquipe.length > 50 ? '...' : '' }}</td>
+              <td>{{ team.nbMembres }}</td>
+              <td class="d-flex gap-2">
+                <button (click)="viewTeam(team)" class="btn btn-sm btn-info text-white">
+                  <i class="ni ni-zoom-split-in"></i> View
+                </button>
+                <button (click)="editTeam(team)" class="btn btn-sm btn-primary">
+                  <i class="ni ni-ruler-pencil"></i> Edit
+                </button>
+                <button *ngIf="currentUser?.role !== 'manager'" (click)="openAddMemberModal(addMemberModal, team)" class="btn btn-sm btn-success">
+                  <i class="ni ni-fat-add"></i> Add Member
+                </button>
+                <button *ngIf="currentUser?.role !== 'manager'" (click)="deleteTeam(team.id, team.nomEquipe)" class="btn btn-sm btn-default">
+                  <i class="ni ni-fat-remove"></i> Delete
+                </button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer py-4 d-flex justify-content-end">
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng-template #addMemberModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Add Member to {{ selectedTeam?.nomEquipe }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="select-collaborator">Select a Collaborator</label>
+      <select class="form-control" [(ngModel)]="selectedCollaboratorId">
+        <option [ngValue]="null" disabled>Select a user</option>
+        <option *ngFor="let user of availableCollaborators" [value]="user.id">
+          {{ user.prenom }} {{ user.nom }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('cancel click')">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="addMemberToTeam(); modal.close('Save click')" [disabled]="!selectedCollaboratorId">Add Member</button>
+  </div>
+</ng-template>
+<ng-template #viewTeamModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{ selectedTeam?.nomEquipe }} Details</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h5>Description</h5>
+    <p>{{ selectedTeam?.descriptionEquipe }}</p>
+    <hr>
+
+    <h5>Team Lead</h5>
+    <div *ngIf="selectedTeam?.responsable?.id; else noLead">
+      <ul class="list-group">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ getTeamLeadName(selectedTeam.responsable.id) }}
+          <button *ngIf="currentUser?.role !== 'manager'"
+                  (click)="removeMemberFromTeam(selectedTeam.responsable)"
+                  class="btn btn-sm btn-danger">
+            <i class="ni ni-fat-remove"></i>
+          </button>
+        </li>
+      </ul>
+    </div>
+    <ng-template #noLead>
+      <p>Not assigned</p>
+    </ng-template>
+
+    <hr>
+    <h5>Other Members ({{ totalMembers > 0 ? (selectedTeam?.responsable ? totalMembers - 1 : totalMembers) : 0 }})</h5>
+    <ul class="list-group">
+      <ng-container *ngFor="let member of teamMembers | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: totalMembers }">
+        <li *ngIf="member.id !== selectedTeam?.responsable?.id"
+            class="list-group-item d-flex justify-content-between align-items-center">
+          {{ member.prenom }} {{ member.nom }}
+          <button *ngIf="currentUser?.role !== 'manager'" (click)="removeMemberFromTeam(member)" class="btn btn-sm btn-danger">
+            <i class="ni ni-fat-remove"></i>
+          </button>
+        </li>
+      </ng-container>
+      <li *ngIf="totalMembers <= (selectedTeam?.responsable ? 1 : 0)" class="list-group-item">
+        No other members assigned to this team yet.
+      </li>
+    </ul>
+
+    <div class="d-flex justify-content-center mt-4" *ngIf="totalMembers > pageSize">
+      <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('Close click')">Close</button>
+  </div>
+</ng-template>

@@ -1,0 +1,138 @@
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
+     style="min-height: 200px; background-image: url(assets/img/theme/ST.png); background-size: cover; background-position: center top;">
+  <span class="mask bg-primary opacity-8"></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+      <div class="col-lg-7 col-md-10">
+        <h1 class="display-2 text-white">Bonjour {{ nom }}</h1>
+        <p class="text-white mt-0 mb-5">
+          Ceci est votre page de profil. Vous pouvez suivre vos progrès et gérer vos projets ou tâches assignées.
+        </p>
+        <a href="#" class="btn btn-info">Modifier le profil</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">Ajouter un nouvel utilisateur</h3>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form (ngSubmit)="createUser()" #userForm="ngForm">
+            <h6 class="heading-small text-muted mb-4">Informations de l'utilisateur</h6>
+            <div class="pl-lg-4">
+
+              <!-- Prénom et Nom -->
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="prenom">Prénom</label>
+                    <input type="text" id="prenom" [(ngModel)]="prenom" name="prenom"
+                           class="form-control form-control-alternative" placeholder="Prénom" required>
+                    <div *ngFor="let msg of getMessagesForField('prénom')" class="text-danger mt-1">
+                      {{ msg }}
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="nom">Nom</label>
+                    <input type="text" id="nom" [(ngModel)]="nom" name="nom"
+                           class="form-control form-control-alternative" placeholder="Nom" required>
+                    <div *ngFor="let msg of getMessagesForField('nom')" class="text-danger mt-1">
+                      {{ msg }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email et numéro -->
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="email">Adresse email</label>
+                    <input type="email" id="email" [(ngModel)]="email" name="email"
+                           class="form-control form-control-alternative" placeholder="exemple@domaine.com" required>
+                    <div *ngFor="let msg of getMessagesForField('email')" class="text-danger mt-1">
+                      {{ msg }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="numero">Numéro de téléphone</label>
+                    <input type="number" id="numero" [(ngModel)]="numero" name="numero"
+                           class="form-control form-control-alternative" placeholder="Ex: 12345678" required>
+                    <div *ngFor="let msg of getMessagesForField('numéro')" class="text-danger mt-1">
+                      {{ msg }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Rôle -->
+              <div class="row" *ngIf="showRoleSelect">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="role">Rôle</label>
+                    <select id="role" name="role" [(ngModel)]="role" class="form-control form-control-alternative" [disabled]="disableRoleSelect" required>
+  <option value="">-- Sélectionner un rôle --</option>
+  <option *ngFor="let r of roles" [value]="r">{{ r.charAt(0).toUpperCase() + r.slice(1) }}</option>
+</select>
+
+                    <div *ngFor="let msg of getMessagesForField('rôle')" class="text-danger mt-1">
+                      {{ msg }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Département et mot de passe -->
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="departement">Département</label>
+                    <select id="departement" name="departement" [(ngModel)]="departementId"
+                            class="form-control form-control-alternative" [disabled]="disableDepartement" required>
+                      <option value="">-- Sélectionner --</option>
+                      <option *ngFor="let dep of departements" [value]="dep.id">{{ dep.nomDepartement }}</option>
+                    </select>
+                    <div *ngFor="let msg of getMessagesForField('département')" class="text-danger mt-1">
+                      {{ msg }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label for="password">Mot de passe</label>
+                    <input type="password" id="password" class="form-control form-control-alternative"
+                           placeholder="Mot de passe" disabled>
+                    <small class="form-text text-muted">Le mot de passe sera généré automatiquement.</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bouton ajouter -->
+              <div class="row mt-4">
+                <div class="col-lg-4">
+                  <button type="submit" class="btn btn-primary">Ajouter</button>
+                </div>
+              </div>
+
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

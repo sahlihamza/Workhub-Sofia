@@ -1,0 +1,113 @@
+<!-- HEADER -->
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
+  style="min-height: 200px; background-image: url(assets/img/theme/ST.png); background-size: cover; background-position: center top;">
+  <span class="mask bg-primary opacity-8"></span>
+</div>
+
+<!-- CONTENU -->
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+          <h3 class="mb-0">Liste des demandes à traiter</h3>
+
+          <!-- Filtre -->
+          <select class="form-select w-auto custom-select-filter" [(ngModel)]="filtreStatut" (change)="appliquerFiltre()">
+            <option value="tous">Tous</option>
+            <option value="en_attente">En attente</option>
+            <option value="confirmee">Confirmées</option>
+            <option value="rejettee">Rejetées</option>
+          </select>
+        </div>
+
+        <div class="card-body">
+          <div class="table-responsive mt-4">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <!-- <th>ID</th> -->
+                  <th>Nom</th>
+                  <th>Prénom</th>
+                  <th>Date de début</th>
+                  <th>Date de fin</th>
+                  <th>Type</th>
+                  <th>Cause</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="demandesAffichees.length > 0; else noDemandes">
+                  <tr *ngFor="let demande of demandesAffichees">
+                    <!-- <td>{{ demande.id }}</td> -->
+
+<td [title]="demande.utilisateur?.nom">
+  {{ demande.utilisateur?.nom?.length > 6 ? (demande.utilisateur.nom | slice:0:6) + '…' : demande.utilisateur?.nom }}
+</td>
+
+<td [title]="demande.utilisateur?.prenom">
+  {{ demande.utilisateur?.prenom?.length > 6 ? (demande.utilisateur.prenom | slice:0:6) + '…' : demande.utilisateur?.prenom }}
+</td>
+
+<td>{{ demande.dateDebut | date:'dd/MM/yyyy' }}</td>
+<td>{{ demande.dateFin | date:'dd/MM/yyyy' }}</td>
+<td>{{ formatType(demande.type) }}</td>
+
+<td [title]="demande.cause">
+  {{ demande.cause?.length > 10 ? (demande.cause | slice:0:10) + '…' : demande.cause }}
+</td>
+
+<td [ngClass]="getStatutClass(demande.statut)">
+  {{ formatStatut(demande.statut) }}
+</td>
+
+<td>
+  <button *ngIf="demande.statut === 'en_attente'"
+          class="btn btn-sm btn-success me-2"
+          (click)="traiterDemande(demande.id, 'confirmee')">
+    <i class="fas fa-check"></i> Accepter
+  </button>
+  <button *ngIf="demande.statut === 'en_attente'"
+          class="btn btn-sm btn-danger"
+          (click)="traiterDemande(demande.id, 'rejettee')">
+    <i class="fas fa-times"></i> Refuser
+  </button>
+</td>
+
+                  </tr>
+                </ng-container>
+
+                <ng-template #noDemandes>
+                  <tr>
+                    <td colspan="9" class="text-center text-muted">Aucune demande.</td>
+                  </tr>
+                </ng-template>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- PAGINATION -->
+<div class="d-flex align-items-center mt-3" *ngIf="totalPages > 1" style="position: relative;">
+  <button class="btn btn-outline-primary btn-sm"
+          [disabled]="pageCourante === 1"
+          (click)="changerPage(pageCourante - 1)">
+    Précédent
+  </button>
+
+  <div class="flex-grow-1 text-center">
+    Page {{ pageCourante }} / {{ totalPages }}
+  </div>
+
+  <button class="btn btn-outline-primary btn-sm"
+          [disabled]="pageCourante === totalPages"
+          (click)="changerPage(pageCourante + 1)">
+    Suivant
+  </button>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

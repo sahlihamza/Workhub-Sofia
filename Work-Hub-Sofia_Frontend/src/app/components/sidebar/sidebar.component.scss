@@ -1,0 +1,189 @@
+/* Your Custom Styles + Toggler Styles (Consolidated) */
+
+.navbar-vertical {
+  background-color: #ffffff;
+  box-shadow: none;
+  border-right: 1px solid #f0f0f0;
+  position: relative;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Sidebar Navigation Links */
+.navbar-nav .nav-item .nav-link {
+  color: #555555;
+  padding: 10px 18px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease-out;
+  border-radius: 4px;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.navbar-nav .nav-item .nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fffaf0;
+  z-index: -1;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.2s ease-out;
+  border-radius: 4px;
+}
+
+.navbar-nav .nav-item .nav-link:hover::before {
+  transform: scaleX(1);
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+  color: #333333;
+}
+
+.navbar-nav .nav-item .nav-link i {
+  margin-right: 10px;
+  font-size: 1rem;
+  transition: color 0.2s ease-out;
+  color: #888888;
+}
+
+.navbar-nav .nav-item .nav-link:hover i {
+  color: #ec8b00;
+}
+
+.navbar-nav .nav-item .nav-link.active {
+  background-color: #fff8eb;
+  color: #ec8b00 !important;
+  font-weight: 500;
+}
+
+.navbar-nav .nav-item .nav-link.active i {
+  color: #ec8b00 !important;
+}
+
+/* Brand Image */
+.navbar-brand-img {
+  transition: transform 0.2s ease-out;
+}
+
+.navbar-brand-img:hover {
+  transform: scale(1.2);
+}
+
+/* Dropdown Menu */
+.dropdown-menu-arrow.dropdown-menu-right {
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f5f5f5;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdown-item {
+  color: #555555;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #fffaf0;
+  color: #ec8b00;
+}
+
+
+/* === STYLES FOR TOGGLER AND MINIMIZED STATE === */
+
+/* Collapse Button (integrated into sidebar edge) */
+.sidebar-toggler {
+  position: fixed;
+  top: 50%;
+  left: var(--sidebar-width-expanded);
+  transform: translateY(-50%);
+  z-index: 2000;
+  width: 28px;
+  height: 60px; /* taller so it feels like part of the edge */
+  border-radius: 0 8px 8px 0; /* rounded only on right side */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+
+  background: #ffffff; /* same as sidebar */
+  border-left: 1px solid #f0f0f0; /* subtle separation line */
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.08); /* light shadow on right */
+}
+
+.sidebar-toggler i {
+  font-size: 0.9rem;
+  color: #ec8b00; /* accent color */
+  pointer-events: none;
+}
+
+.sidebar-toggler:hover {
+  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Minimized Sidebar (icon-only mode) */
+.navbar-vertical.minimized {
+  width: var(--sidebar-width-minimized) !important;
+
+  /* Hide brand image/logo */
+  .navbar-brand {
+    display: none !important;
+  }
+
+  /* Hide nav link text */
+  .nav-link-text {
+    display: none !important;
+  }
+
+  /* Center the icons */
+  .navbar-nav .nav-link {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .navbar-nav .nav-link i {
+    margin-right: 0 !important;
+    font-size: 1.2rem;
+  }
+}
+
+/* When minimized, shift the toggler */
+:host.sidebar-minimized .sidebar-toggler {
+  left: var(--sidebar-width-minimized);
+}
+
+.collapse.navbar-collapse {
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+/* Scrollable nav without visible scrollbar */
+.navbar-nav {
+  overflow-y: auto;
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+}
+
+/* Full height for sidebar content */
+.container-fluid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}

@@ -1,0 +1,186 @@
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.calendar-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.calendar-horizontal {
+  display: flex;
+  overflow-x: auto;
+  padding: 1rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: #cad1d7 #f7fafc;
+}
+
+.campaign-dot {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  cursor: help;
+  opacity: 0.4;
+}
+
+.calendar-day {
+  min-width: 110px;
+  max-width: 110px;
+  height: 110px;
+  padding: 0.5rem;
+  text-align: center;
+  border-right: 1px solid #e9ecef;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  border-top: 4px solid transparent;
+
+  &:first-child {
+    border-left: 1px solid #e9ecef;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+
+  &.present { border-top-color: #2dce89; }
+  &.remote { border-top-color: #11cdef; }
+  &.holiday {
+    border-top-color: #fb6340;
+    cursor: not-allowed;
+  }
+
+  &.weekend {
+    background-color: #f7fafc;
+  }
+
+  &.past-day {
+    color: #adb5bd;
+    cursor: not-allowed;
+    background-color: #f7fafc;
+    &:hover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.day-info {
+  .day-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #8898aa;
+    text-transform: uppercase;
+  }
+  .day-number {
+    font-size: 1.75rem;
+  }
+}
+
+.status-display {
+  margin-top: 0.5rem;
+}
+
+.note-indicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #8898aa;
+}
+
+.hover-options {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.calendar-day:not(.past-day):hover .hover-options {
+  opacity: 1;
+}
+
+.calendar-day:not(.past-day):hover .status-display {
+  opacity: 0;
+}
+
+:host-context(.fullscreen-mode) {
+  .card {
+    position: fixed;
+    top: 0;
+    height: 100vh;
+    z-index: 1500;
+    margin: 0;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+    left: 280px;
+    width: calc(100% - 280px);
+    transition: left 0.2s ease-in-out, width 0.2s ease-in-out;
+  }
+
+  &:host-context(.sidebar-minimized) .card {
+    left: 90px;
+    width: calc(100% - 90px);
+  }
+
+  // --- MODIFICATIONS START HERE ---
+
+  // 1. Prevent the card body from scrolling and prepare it for flexbox
+  .card-body {
+    flex-grow: 1;
+    overflow: hidden; // Changed from auto to hidden
+    display: flex;    // Added
+  }
+
+  // 2. Make the calendar grid stretch to fill the card body
+  .calendar-horizontal {
+    flex-wrap: wrap;
+    overflow: hidden; // Changed from overflow-x: hidden
+    flex-grow: 1;     // Added
+    display: flex;    // Added
+    align-content: stretch; // This is the key change for vertical stretching
+  }
+
+  // 3. Make the calendar days flexible instead of a fixed height
+  .calendar-day {
+    flex-basis: calc(100% / 7);
+    min-width: 130px;
+    border-bottom: 1px solid #f4f4f4;
+    border-right: 1px solid #f4f4f4;
+    height: auto;       // Changed from 140px
+    flex-grow: 1;       // Added to allow days to fill row height
+    min-height: 100px;  // Added for better aesthetics
+  }
+
+  // --- MODIFICATIONS END HERE ---
+
+  .calendar-day:nth-child(7n) {
+    border-right: none;
+  }
+}
+.filter-container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease-in-out;
+
+  &.expanded {
+    // Make this value large enough to fit your filters
+    max-height: 100px;
+  }
+}

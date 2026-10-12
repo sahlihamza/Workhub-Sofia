@@ -1,0 +1,36 @@
+select.form-select {
+  background-color: #fff;
+  border: 1.5px solid #007bff;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #007bff;
+  min-width: 150px;
+  transition: all 0.3s ease;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+/* Au focus */
+select.form-select:focus {
+  outline: none;
+  border-color: #0056b3;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
+  background-color: #e7f1ff;
+}
+
+/* Option styling */
+select.form-select option {
+  font-weight: normal;
+  color: #333;
+  padding: 6px 12px;
+}
+
+/* Hover sur le select */
+select.form-select:hover {
+  border-color: #0056b3;
+  background-color: #f0f8ff;
+}
+
+

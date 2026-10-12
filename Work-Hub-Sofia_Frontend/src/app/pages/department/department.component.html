@@ -1,0 +1,233 @@
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 200px; background-image: url(assets/img/theme/ST.png); background-size: cover; background-position: center top;">
+  <span class="mask bg-primary opacity-8"></span>
+  <div class="container-fluid d-flex align-items-center">
+    <div class="row">
+    </div>
+  </div>
+</div>
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <div class="row align-items-center">
+            <div class="col-8">
+              <h3 class="mb-0">{{ isEditing ? 'Edit Department' : 'Create New Department' }}</h3>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()">
+            <h6 class="heading-small text-muted mb-4">Department Information</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-department-name">Department Name</label>
+                    <input type="text" id="input-department-name"
+                           class="form-control form-control-alternative"
+                           placeholder="e.g., Human Resources"
+                           formControlName="nomDepartement"
+                           [class.is-invalid]="departmentForm.get('nomDepartement')?.invalid && (departmentForm.get('nomDepartement')?.touched || submitted)">
+
+                    <div *ngIf="departmentForm.get('nomDepartement')?.invalid && (departmentForm.get('nomDepartement')?.touched || submitted)"
+                         class="text-danger mt-1">
+                      <small *ngIf="departmentForm.get('nomDepartement')?.hasError('required')">
+                        Department name is required.
+                      </small>
+                      <small *ngIf="departmentForm.get('nomDepartement')?.hasError('notUnique')">
+                        {{ departmentForm.get('nomDepartement')?.errors?.serverError || 'This department name is already in use.' }}
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-department-description">Description</label>
+                    <input type="text" id="input-department-description"
+                           class="form-control form-control-alternative"
+                           placeholder="Department description"
+                           formControlName="descriptionDepartement"
+                           [class.is-invalid]="departmentForm.get('descriptionDepartement')?.invalid && (departmentForm.get('descriptionDepartement')?.touched || submitted)">
+
+                    <div *ngIf="departmentForm.get('descriptionDepartement')?.invalid && (departmentForm.get('descriptionDepartement')?.touched || submitted)"
+                         class="text-danger mt-1">
+                      <small *ngIf="departmentForm.get('descriptionDepartement')?.hasError('required')">
+                        Description is required.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label">Status</label>
+                    <div class="custom-control custom-checkbox mt-2">
+                      <input class="custom-control-input" id="input-status" type="checkbox" formControlName="statut">
+                      <label class="custom-control-label" for="input-status">Active</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-responsable">Department Head</label>
+                    <select id="input-responsable" class="form-control form-control-alternative"
+                            formControlName="responsableId"
+                            [class.is-invalid]="departmentForm.get('responsableId')?.invalid && (departmentForm.get('responsableId')?.touched || submitted)">
+                      <option [ngValue]="null">-- Not Assigned --</option>
+                      <option *ngFor="let user of dropdownAdmins" [value]="user.id">
+                        {{ user.prenom }} {{ user.nom }}
+                      </option>
+                    </select>
+                    <div *ngIf="departmentForm.get('responsableId')?.invalid && (departmentForm.get('responsableId')?.touched || submitted)"
+                         class="text-danger mt-1">
+                      <small *ngIf="departmentForm.get('responsableId')?.hasError('required')">
+                        Department head is required.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="d-inline-block" [ngbTooltip]="!isEditing && isCreateDisabled ? tooltipMessage : null" placement="top">
+              <button type="submit" class="btn btn-primary my-4"
+                [disabled]="departmentForm.invalid || (!isEditing && isCreateDisabled)">
+                {{ isEditing ? 'Update' : 'Create' }}
+              </button>
+          </span>
+            <button type="button" class="btn btn-secondary my-4" (click)="resetForm()" *ngIf="isEditing">Cancel</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card shadow mt-4">
+        <div class="card-header border-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Department List</h3>
+            <input type="text" class="form-control form-control-alternative w-25"
+                   placeholder="Search by name..."
+                   [(ngModel)]="searchTerm"
+                   (ngModelChange)="applyFilter()">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let dept of filteredDepartments | paginate: { itemsPerPage: 10, currentPage: p }">
+              <td>{{ dept.nomDepartement }}</td>
+              <td [ngbTooltip]="dept.descriptionDepartement">{{ dept.descriptionDepartement | slice:0:50 }}{{ dept.descriptionDepartement.length > 50 ? '...' : '' }}</td>
+              <td>
+          <span class="badge badge-dot mr-4">
+            <i [ngClass]="dept.statut ? 'bg-success' : 'bg-warning'"></i>
+            {{ dept.statut ? 'Active' : 'Inactive' }}
+          </span>
+              </td>
+              <td class="d-flex gap-2">
+                <button (click)="openViewModal(viewDepartmentModal, dept)" class="btn btn-sm btn-info text-white">View</button>
+                <button (click)="editDepartment(dept)" class="btn btn-sm btn-primary">Edit</button>
+                <button (click)="deleteDepartment(dept.id, dept.nomDepartement)" class="btn btn-sm btn-default">Delete</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer py-4 d-flex justify-content-end">
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #viewDepartmentModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">{{ selectedDepartment?.nomDepartement }} Details</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h5>Description</h5>
+    <p>{{ selectedDepartment?.descriptionDepartement }}</p>
+    <hr>
+
+    <div *ngIf="selectedDepartment?.responsable">
+      <h5>Department Head</h5>
+      <ul class="list-group mb-4">
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>
+            {{ selectedDepartment.responsable.prenom }} {{ selectedDepartment.responsable.nom }} ({{ selectedDepartment.responsable.email }})
+          </span>
+          <button (click)="removeMemberFromDepartment(selectedDepartment.responsable)" class="btn btn-sm btn-danger">
+            <i class="ni ni-fat-remove"></i>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <h5>Other Members ({{ totalMembers > 0 ? (selectedDepartment?.responsable ? totalMembers - 1 : totalMembers) : 0 }})</h5>
+    <ul class="list-group">
+      <ng-container *ngFor="let member of departmentMembers | paginate: { itemsPerPage: pageSize, currentPage: currentPage, totalItems: totalMembers }">
+        <li *ngIf="member.id !== selectedDepartment?.responsable?.id"
+            class="list-group-item d-flex justify-content-between align-items-center">
+          {{ member.prenom }} {{ member.nom }} ({{ member.email }})
+          <div>
+            <button (click)="promoteToHead(member)" class="btn btn-sm btn-success mr-2" title="Promote to Head">
+              <i class="ni ni-bold-up"></i>
+            </button>
+            <button (click)="removeMemberFromDepartment(member)" class="btn btn-sm btn-danger" title="Remove Member">
+              <i class="ni ni-fat-remove"></i>
+            </button>
+          </div>
+        </li>
+      </ng-container>
+
+      <li *ngIf="totalMembers <= (selectedDepartment?.responsable ? 1 : 0)" class="list-group-item">
+        No other members assigned to this department yet.
+      </li>
+    </ul>
+
+    <div class="d-flex justify-content-center mt-4" *ngIf="totalMembers > pageSize">
+      <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" (click)="openAddMemberModal(addMemberModal)">Add Member</button>
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Close click')">Close</button>
+  </div>
+</ng-template>
+
+<ng-template #addMemberModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Add Member to {{ selectedDepartment?.nomDepartement }}</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="select-member">Select a User</label>
+      <select id="select-member" class="form-control" [(ngModel)]="selectedMemberId">
+        <option [ngValue]="null" disabled>Select from available users...</option>
+        <option *ngFor="let member of availableMembers" [value]="member.id">
+          {{ member.prenom }} {{ member.nom }} ({{ member.role }})
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('cancel click')">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="confirmAddMember(); modal.close('Save click')" [disabled]="!selectedMemberId">
+      Add to Department
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,14 @@
+<app-sidebar [minimized]="isSidebarMinimized" (onToggleSidebar)="toggleSidebar()"></app-sidebar>
+
+<!-- Collapse button lives outside sidebar -->
+<div class="sidebar-toggler" (click)="toggleSidebar()">
+  <i class="fas" [ngClass]="isSidebarMinimized ? 'fa-chevron-right' : 'fa-chevron-left'"></i>
+</div>
+
+<div class="main-content" [class.sidebar-minimized]="isSidebarMinimized">
+  <app-navbar></app-navbar>
+  <router-outlet></router-outlet>
+  <div class="container-fluid">
+    <app-footer></app-footer>
+  </div>
+</div>

@@ -1,0 +1,15 @@
+{
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "addUser": "Add User",
+    "manageDepartments": "Manage Departments",
+    "manageTeams": "Manage Teams",
+    "managePositions": "Manage Positions",
+    "planning": "Planning",
+    "managePlannings": "Manage Plannings",
+    "leaveRequests": "Leave Requests",
+    "manageRequests": "Manage Requests",
+    "manageCompensation": "Manage Compensation"
+  }
+}

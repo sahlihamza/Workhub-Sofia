@@ -1,0 +1,203 @@
+<div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 200px; background-image: url(assets/img/theme/ST.png); background-size: cover; background-position: center top;">
+  <span class="mask bg-primary opacity-8"></span>
+</div>
+<div class="container-fluid mt--7">
+  <div class="row">
+    <div class="col-xl-12 order-xl-1">
+
+      <div class="card bg-secondary shadow">
+        <div class="card-header bg-white border-0">
+          <h3 class="mb-0">{{ isEditing ? 'Edit Position' : 'Create New Position' }}</h3>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="posteForm" (ngSubmit)="onSubmit()">
+            <h6 class="heading-small text-muted mb-4">Position Information</h6>
+            <div class="pl-lg-4">
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-department">Parent Department</label>
+                    <select id="select-department" class="form-control form-control-alternative"
+                            formControlName="departementId"
+                            [class.is-invalid]="posteForm.get('departementId')?.invalid && (posteForm.get('departementId')?.touched || submitted)">
+                      <option [ngValue]="null" disabled>Select a department</option>
+                      <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.nomDepartement }}</option>
+                    </select>
+                    <div *ngIf="posteForm.get('departementId')?.invalid && (posteForm.get('departementId')?.touched || submitted)"
+                         class="text-danger mt-1">
+                      <small *ngIf="posteForm.get('departementId')?.hasError('required')">
+                        Parent department is required.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-position-name">Position Name</label>
+                    <input type="text" id="input-position-name" class="form-control form-control-alternative"
+                           formControlName="nomPoste"
+                           [class.is-invalid]="posteForm.get('nomPoste')?.invalid && (posteForm.get('nomPoste')?.touched || submitted)">
+                    <div *ngIf="posteForm.get('nomPoste')?.invalid && (posteForm.get('nomPoste')?.touched || submitted)"
+                         class="text-danger mt-1">
+                      <small *ngIf="posteForm.get('nomPoste')?.hasError('required')">
+                        Position name is required.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4" *ngIf="!isEditing">
+                  <div class="form-group">
+                    <label class="form-control-label" for="select-collaborator">Assign to (Optional)</label>
+                    <select id="select-collaborator" class="form-control form-control-alternative"
+                            formControlName="collaborateurId" [disabled]="!posteForm.get('departementId')?.value">
+                      <option [ngValue]="null">Do not assign</option>
+                      <option *ngFor="let user of availableCollaborators" [value]="user.id">
+                        {{ user.prenom }} {{ user.nom }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-lg-12">
+                  <div class="form-group">
+                    <label class="form-control-label" for="input-position-description">Description (Optional)</label>
+                    <textarea id="input-position-description" class="form-control form-control-alternative" formControlName="description"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary my-4">
+              {{ isEditing ? 'Update' : 'Create' }}
+            </button>
+            <button type="button" class="btn btn-secondary my-4" (click)="resetForm()" *ngIf="isEditing">Cancel</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card shadow mt-4">
+        <div class="card-header border-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Position List</h3>
+            <input type="text" class="form-control form-control-alternative w-25"
+                   placeholder="Search by position name..."
+                   [(ngModel)]="searchTermPostes"
+                   (ngModelChange)="applyFilterPostes()">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let poste of filteredPostes | paginate: { id: 'postesPagination', itemsPerPage: 5, currentPage: p1 }">
+              <td>{{ poste.nomPoste }}</td>
+              <td [ngbTooltip]="poste.description || 'No description provided.'">{{ (poste.description || 'No description provided.') | slice:0:50 }}{{ (poste.description && poste.description.length > 50) ? '...' : '' }}</td>
+              <td class="d-flex gap-2">
+                <button (click)="openViewModal(viewPosteModal, poste)" class="btn btn-sm btn-info text-white">View</button>
+                <button (click)="editPoste(poste)" class="btn btn-sm btn-primary">Edit</button>
+                <button (click)="deletePoste(poste.id)" class="btn btn-sm btn-default">Delete</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer py-4 d-flex justify-content-end">
+          <pagination-controls id="postesPagination" (pageChange)="p1 = $event"></pagination-controls>
+        </div>
+      </div>
+
+      <div class="card shadow mt-4">
+        <div class="card-header border-0">
+          <div class="d-flex justify-content-between align-items-center">
+            <h3 class="mb-0">Collaborator Assignments</h3>
+            <input type="text" class="form-control form-control-alternative w-25"
+                   placeholder="Search by collaborator name..."
+                   [(ngModel)]="searchTermCollaborators"
+                   (ngModelChange)="applyFilterCollaborators()">
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+            <tr>
+              <th scope="col">Collaborator Name</th>
+              <th scope="col">Email</th>
+              <th scope="col">Current Position</th>
+              <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let user of collaborators | paginate: { id: 'collaboratorsPagination', itemsPerPage: 5, currentPage: p2 }">
+              <td>{{ user.prenom }} {{ user.nom }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span *ngIf="user.poste" class="badge badge-pill badge-primary">{{ user.poste.nomPoste }}</span>
+                <span *ngIf="!user.poste" class="badge badge-pill badge-light">Not Assigned</span>
+              </td>
+              <td class="d-flex gap-2">
+                <button (click)="openAssignModal(assignModal, user)" class="btn btn-sm btn-success">{{ user.poste ? 'Change' : 'Assign' }} Position</button>
+                <button (click)="unassignPosition(user)" class="btn btn-sm btn-warning" *ngIf="user.poste">Unassign</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer py-4 d-flex justify-content-end">
+          <pagination-controls id="collaboratorsPagination" (pageChange)="p2 = $event"></pagination-controls>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng-template #assignModal let-modal>
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-basic-title">Assign Position to {{ selectedUser?.prenom }} {{ selectedUser?.nom }}</h4>
+  <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div class="form-group">
+    <label for="select-position">Select a Position</label>
+    <select class="form-control" [(ngModel)]="selectedPosteId">
+      <option [ngValue]="null" disabled>Select from available positions...</option>
+      <option *ngFor="let poste of availablePostesForAssignment" [value]="poste.id">
+        {{ poste.nomPoste }}
+      </option>
+    </select>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="modal.dismiss('cancel click')">Cancel</button>
+  <button type="button" class="btn btn-primary" (click)="confirmAssignment(); modal.close('Save click')" [disabled]="!selectedPosteId">Save Assignment</button>
+</div>
+</ng-template>
+<ng-template #viewPosteModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Position Details</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <h5>Name</h5>
+    <p>{{ selectedPoste?.nomPoste }}</p>
+    <hr>
+    <h5>Department</h5>
+    <p>{{ selectedPoste?.departement?.nomDepartement || 'Not Assigned' }}</p>
+    <hr>
+    <h5>Description</h5>
+    <p class="description-text">{{ selectedPoste?.description || 'No description provided.' }}</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-dark" (click)="modal.close('Close click')">Close</button>
+  </div>
+</ng-template>
