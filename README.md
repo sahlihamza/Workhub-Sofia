@@ -180,10 +180,15 @@ npm run seed:superadmin
 ```
 
 Le seed demande interactivement l'adresse e-mail et le mot de passe du
-superadministrateur. Le mot de passe n'est pas affiché dans le terminal et
-aucune de ces deux informations n'est stockée dans `.env` ou dans le dépôt.
-La commande ne recrée pas un superadministrateur si un compte `superadmin`
-existe déjà.
+superadministrateur, puis affiche les deux valeurs dans le terminal après la
+création. Aucune de ces deux informations n'est stockée dans `.env` ou dans le
+dépôt. La commande ne recrée pas un superadministrateur si un compte
+`superadmin` existe déjà.
+
+Le code du seed se trouve dans
+[`Work-Hub-Sofia-Backend/src/seeds/create-superadmin.seed.ts`](./Work-Hub-Sofia-Backend/src/seeds/create-superadmin.seed.ts).
+Évitez de partager ou d'enregistrer la sortie du terminal, car le mot de passe
+y apparaît en clair.
 
 ## 5. Installer et démarrer le frontend
 

@@ -103,7 +103,9 @@ async function bootstrap() {
 
   await userRepository.save(superAdmin);
 
-  console.log(`Superadmin créé avec l'email: ${superAdmin.email}`);
+  console.log('Superadmin créé avec succès.');
+  console.log(`Email: ${superAdmin.email}`);
+  console.log(`Mot de passe: ${plainPassword}`);
   
   await app.close();
 }
