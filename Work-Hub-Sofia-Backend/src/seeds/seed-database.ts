@@ -154,29 +154,30 @@ async function seed() {
         await userRepository.save(users[1]);
       }
 
-      const planningUser = users[1];
       const planningDate = new Date().toISOString().slice(0, 10);
-      const existingPlanning = await planningRepository.findOne({
-        where: { user: { id: planningUser.id }, date: planningDate },
-      });
-      if (!existingPlanning) {
-        await planningRepository.save(
-          planningFactory({
-            user: planningUser,
-            date: planningDate,
-            status: 'present',
-            notes: 'Donnée de démonstration',
-          }),
-        );
+      for (const planningUser of [admin, users[1]]) {
+        const existingPlanning = await planningRepository.findOne({
+          where: { user: { id: planningUser.id }, date: planningDate },
+        });
+        if (!existingPlanning) {
+          await planningRepository.save(
+            planningFactory({
+              user: planningUser,
+              date: planningDate,
+              status: 'present',
+              notes: 'Donnée de démonstration',
+            }),
+          );
+        }
       }
 
       const existingLeave = await leaveRepository.findOne({
-        where: { user: { id: planningUser.id }, cause: 'Congé de démonstration' },
+        where: { user: { id: users[1].id }, cause: 'Congé de démonstration' },
       });
       if (!existingLeave) {
         await leaveRepository.save(
           demandeCongeFactory({
-            user: planningUser,
+            user: users[1],
             dateDebut: new Date('2026-11-02'),
             dateFin: new Date('2026-11-03'),
             cause: 'Congé de démonstration',

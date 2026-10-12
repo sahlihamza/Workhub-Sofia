@@ -196,7 +196,7 @@ export class DemandeCongeService {
 
     switch (userConnecte.role) {
       case 'superadmin':
-        query.where('user.role = :role', { role: 'admin' });
+        query.where('user.role != :role', { role: 'superadmin' });
         break;
 
       case 'admin':
