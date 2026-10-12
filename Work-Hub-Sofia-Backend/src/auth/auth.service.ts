@@ -95,8 +95,8 @@ export class AuthService {
     const payload = this.getPayload(user);
 
     const accessSecret =
-      this.configService.get<string>('JWT_ACCESS_SECRET') ||
-      this.configService.get<string>('JWT_SECRET');
+      this.configService.get<string>('JWT_SECRET') ||
+      this.configService.get<string>('JWT_ACCESS_SECRET');
     const refreshSecret =
       this.configService.get<string>('JWT_REFRESH_SECRET') ||
       this.configService.get<string>('JWT_SECRET');
