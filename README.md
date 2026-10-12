@@ -86,12 +86,31 @@ validation préalable.
 
 ## 3. Configurer les variables du backend
 
-Créer le fichier
+Copier le modèle fourni, puis remplacer toutes les valeurs d'exemple :
+
+```bash
+cd Work-Hub-Sofia-Backend
+cp .env.example .env
+```
+
+Sous PowerShell Windows :
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Le modèle se trouve dans
+[`Work-Hub-Sofia-Backend/.env.example`](./Work-Hub-Sofia-Backend/.env.example).
+Le fichier réellement utilisé par l'application est
 `Work-Hub-Sofia-Backend/.env` :
 
 ```env
 JWT_SECRET=changez-cette-valeur
+JWT_ACCESS_SECRET=changez-cette-valeur
+JWT_REFRESH_SECRET=changez-cette-valeur
 PASSWORD_SECRET=changez-cette-valeur
+
+FRONTEND_URL=http://localhost:4200
 
 # Requis uniquement pour l'envoi d'e-mails avec Brevo/SMTP
 SENDINBLUE_EMAIL=votre-adresse-email
@@ -101,11 +120,21 @@ SENDINBLUE_API_KEY=votre-cle-api
 SUPERADMIN_EMAIL=admin@example.com
 SUPERADMIN_PASSWORD=changez-ce-mot-de-passe
 
+# Requis uniquement pour les jours fériés
+CALENDARIFIC_API_KEY=votre-cle-api-calendarific
+
 # Optionnel : le backend utilise 3000 par défaut
 PORT=3000
 ```
 
+Les variables suivantes sont utilisées par le code : `JWT_SECRET`,
+`JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `PASSWORD_SECRET`, `FRONTEND_URL`,
+`SENDINBLUE_EMAIL`, `SENDINBLUE_API_KEY`, `SUPERADMIN_EMAIL`,
+`SUPERADMIN_PASSWORD`, `CALENDARIFIC_API_KEY` et `PORT`.
+
 Ne jamais commit le fichier `.env`, une clé API ou un vrai mot de passe.
+Le fichier `.env` est ignoré par Git ; seul `.env.example`, qui ne contient
+aucun secret réel, est versionné.
 
 Le backend accepte les requêtes CORS du frontend local à l'adresse
 `http://localhost:4200`.
@@ -260,4 +289,3 @@ Workhub-Sofia/
 │   └── package.json
 └── README.md
 ```
-
