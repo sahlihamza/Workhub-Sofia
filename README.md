@@ -61,16 +61,15 @@ ou un autre port, adaptez cette configuration avant de démarrer le backend.
 
 ### Schéma de la base
 
-Le backend utilise `synchronize: false`. Il ne crée donc pas automatiquement
-les tables au démarrage. Le schéma doit être installé avant le premier
-lancement. La migration disponible se trouve dans :
+Le backend utilise `synchronize: false` et exécute automatiquement les
+migrations au démarrage (`DB_MIGRATIONS_RUN=true` par défaut). La migration
+disponible se trouve dans :
 
 [`Work-Hub-Sofia-Backend/src/migrations/1755178998587-UpdateDatabase.ts`](./Work-Hub-Sofia-Backend/src/migrations/1755178998587-UpdateDatabase.ts)
 
-Cette migration est une migration TypeScript et le projet ne contient pas
-encore de commande TypeORM prête à l’exécuter automatiquement. Utilisez le
-processus de migration de votre environnement ou un export SQL de la base de
-développement, puis vérifiez que les tables suivantes existent :
+Après avoir créé la base `WorkHubSofia`, lancez le backend. TypeORM créera les
+tables et enregistrera la migration dans la table `migrations`. Vérifiez que
+les tables suivantes existent :
 
 ```text
 user
@@ -81,8 +80,9 @@ planning
 demande_conge
 ```
 
-Ne pas utiliser `synchronize: true` sur une base contenant des données sans
-validation préalable.
+Pour désactiver l'exécution automatique des migrations, ajoutez
+`DB_MIGRATIONS_RUN=false` dans `.env`. Ne pas utiliser `DB_SYNCHRONIZE=true`
+sur une base contenant des données sans validation préalable.
 
 ## 3. Configurer les variables du backend
 
@@ -116,10 +116,6 @@ FRONTEND_URL=http://localhost:4200
 SENDINBLUE_EMAIL=votre-adresse-email
 SENDINBLUE_API_KEY=votre-cle-api
 
-# Requis uniquement pour créer un superadministrateur
-SUPERADMIN_EMAIL=admin@example.com
-SUPERADMIN_PASSWORD=changez-ce-mot-de-passe
-
 # Requis uniquement pour les jours fériés
 CALENDARIFIC_API_KEY=votre-cle-api-calendarific
 
@@ -129,8 +125,7 @@ PORT=3000
 
 Les variables suivantes sont utilisées par le code : `JWT_SECRET`,
 `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `PASSWORD_SECRET`, `FRONTEND_URL`,
-`SENDINBLUE_EMAIL`, `SENDINBLUE_API_KEY`, `SUPERADMIN_EMAIL`,
-`SUPERADMIN_PASSWORD`, `CALENDARIFIC_API_KEY` et `PORT`.
+`SENDINBLUE_EMAIL`, `SENDINBLUE_API_KEY`, `CALENDARIFIC_API_KEY` et `PORT`.
 
 Ne jamais commit le fichier `.env`, une clé API ou un vrai mot de passe.
 Le fichier `.env` est ignoré par Git ; seul `.env.example`, qui ne contient
@@ -178,15 +173,17 @@ npm run test:e2e
 
 ### Créer le superadministrateur
 
-Après avoir configuré la base et le fichier `.env`, exécuter une seule fois :
+Après avoir configuré la base et le fichier `.env`, exécuter :
 
 ```bash
 npm run seed:superadmin
 ```
 
-La commande utilise `SUPERADMIN_EMAIL`, `SUPERADMIN_PASSWORD` et
-`PASSWORD_SECRET`. Elle ne recrée pas un superadministrateur si un compte
-`superadmin` existe déjà.
+Le seed demande interactivement l'adresse e-mail et le mot de passe du
+superadministrateur. Le mot de passe n'est pas affiché dans le terminal et
+aucune de ces deux informations n'est stockée dans `.env` ou dans le dépôt.
+La commande ne recrée pas un superadministrateur si un compte `superadmin`
+existe déjà.
 
 ## 5. Installer et démarrer le frontend
 
