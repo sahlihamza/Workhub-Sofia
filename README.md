@@ -179,16 +179,36 @@ Après avoir configuré la base et le fichier `.env`, exécuter :
 npm run seed:superadmin
 ```
 
-Le seed demande interactivement l'adresse e-mail et le mot de passe du
-superadministrateur, puis affiche les deux valeurs dans le terminal après la
-création. Aucune de ces deux informations n'est stockée dans `.env` ou dans le
-dépôt. La commande ne recrée pas un superadministrateur si un compte
-`superadmin` existe déjà.
+La commande crée le compte par défaut suivant :
+
+```text
+Email : admin@gmail.com
+Mot de passe : admin 123
+```
+
+Elle affiche ces informations dans le terminal après la création. La commande
+ne recrée pas un superadministrateur si un compte `superadmin` existe déjà.
 
 Le code du seed se trouve dans
 [`Work-Hub-Sofia-Backend/src/seeds/create-superadmin.seed.ts`](./Work-Hub-Sofia-Backend/src/seeds/create-superadmin.seed.ts).
-Évitez de partager ou d'enregistrer la sortie du terminal, car le mot de passe
-y apparaît en clair.
+Le mot de passe est haché en base, mais cette valeur par défaut est connue :
+changez-la avant toute utilisation en production.
+
+### Seed complet de développement
+
+Pour créer les données de démonstration et leurs relations :
+
+```powershell
+cd Work-Hub-Sofia-Backend
+npm run seed
+```
+
+Le seed complet crée de manière idempotente le superadmin, des départements,
+postes, utilisateurs, équipes, plannings, demandes de congé et campagnes.
+Les factories se trouvent dans
+[`Work-Hub-Sofia-Backend/src/seeds/factories.ts`](./Work-Hub-Sofia-Backend/src/seeds/factories.ts)
+et le seed dans
+[`Work-Hub-Sofia-Backend/src/seeds/seed-database.ts`](./Work-Hub-Sofia-Backend/src/seeds/seed-database.ts).
 
 ## 5. Installer et démarrer le frontend
 
