@@ -15,14 +15,18 @@ export class AuthService {
     return this.http.post<{ access_token: string }>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
         if (response.access_token) {
-          localStorage.setItem('auth_token', response.access_token);
+          localStorage.setItem('access_token', response.access_token);
+          if (response.refresh_token) {
+            localStorage.setItem('refresh_token', response.refresh_token);
+          }
         }
       })
     );
   }
 
   logout(): void {
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
   }
 
  //envoyer le mail
@@ -36,6 +40,6 @@ export class AuthService {
 
 
   public isLoggedIn(): boolean {
-    return localStorage.getItem('auth_token') !== null;
+    return localStorage.getItem('access_token') !== null;
   }
 }

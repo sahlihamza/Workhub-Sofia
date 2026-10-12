@@ -6,6 +6,7 @@ import { User } from '../user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { UserService } from 'src/user/user.service';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'crypto';
 import { addMinutes, isBefore } from 'date-fns';
 import * as bcrypt from 'bcrypt';      
@@ -16,6 +17,7 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
+    private configService: ConfigService,
      private userService: UserService,         // Ajouté
     private mailerService: MailerService,     // Ajouté (pour envoyer l'email)
   ) {}
@@ -80,7 +82,8 @@ export class AuthService {
     }
 
     // On ajoute la clé secrète avant comparaison
-    const saltedPassword = (process.env.PASSWORD_SECRET || '') + motDePasse;
+    const passwordSecret = this.configService.get<string>('PASSWORD_SECRET') || '';
+    const saltedPassword = passwordSecret + motDePasse;
 
     // Comparaison avec bcrypt
     const isMatch = await bcrypt.compare(saltedPassword, user.motDePasse);
@@ -91,13 +94,24 @@ export class AuthService {
 
     const payload = this.getPayload(user);
 
+    const accessSecret =
+      this.configService.get<string>('JWT_ACCESS_SECRET') ||
+      this.configService.get<string>('JWT_SECRET');
+    const refreshSecret =
+      this.configService.get<string>('JWT_REFRESH_SECRET') ||
+      this.configService.get<string>('JWT_SECRET');
+
+    if (!accessSecret || !refreshSecret) {
+      throw new InternalServerErrorException('La configuration JWT est incomplète');
+    }
+
     const accessToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_ACCESS_SECRET,
+      secret: accessSecret,
       expiresIn: '2h',
     });
 
     const refreshToken = this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
+      secret: refreshSecret,
       expiresIn: '12h',
     });
 
@@ -115,7 +129,9 @@ export class AuthService {
   async refresh(refreshToken: string) {
     try {
       const payload = this.jwtService.verify(refreshToken, {
-        secret: process.env.JWT_REFRESH_SECRET,
+        secret:
+          this.configService.get<string>('JWT_REFRESH_SECRET') ||
+          this.configService.get<string>('JWT_SECRET'),
       });
 
       const user = await this.userRepository.findOne({
@@ -126,7 +142,9 @@ export class AuthService {
       if (!user) throw new UnauthorizedException();
 
       const newAccessToken = this.jwtService.sign(this.getPayload(user), {
-        secret: process.env.JWT_ACCESS_SECRET,
+        secret:
+          this.configService.get<string>('JWT_ACCESS_SECRET') ||
+          this.configService.get<string>('JWT_SECRET'),
         expiresIn: '15m',
       });
 
@@ -220,7 +238,8 @@ async resetPassword(resetToken: string, motDePasse: string): Promise<{ message: 
   }
 
   // Ajout de la clé secrète au mot de passe avant hachage
-  const saltedPassword = (process.env.PASSWORD_SECRET || '') + motDePasse;
+  const passwordSecret = this.configService.get<string>('PASSWORD_SECRET') || '';
+  const saltedPassword = passwordSecret + motDePasse;
 
   // Hashage avec bcrypt (avec saltRounds = 10 par exemple)
   user.motDePasse = await bcrypt.hash(saltedPassword, 10);
