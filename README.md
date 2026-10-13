@@ -140,6 +140,38 @@ Les fichiers Docker sont [docker-compose.yml](./docker-compose.yml),
 [Work-Hub-Sofia_Frontend/Dockerfile](./Work-Hub-Sofia_Frontend/Dockerfile) et
 [Work-Hub-Sofia_Frontend/nginx.conf](./Work-Hub-Sofia_Frontend/nginx.conf).
 
+## Images Docker publiées par GitHub Actions
+
+Le workflow [`.github/workflows/ci-cd.yml`](./.github/workflows/ci-cd.yml)
+compile le backend, valide Compose et publie automatiquement les images sur
+GitHub Container Registry après chaque push sur `main` :
+
+```text
+ghcr.io/sahlihamza/workhub-sofia-backend:latest
+ghcr.io/sahlihamza/workhub-sofia-frontend:latest
+```
+
+Pour utiliser les dernières images dans Docker Desktop :
+
+```powershell
+docker login ghcr.io
+docker compose -f docker-compose.registry.yml pull
+docker compose -f docker-compose.registry.yml up -d
+```
+
+Pour récupérer une nouvelle version après un nouveau push :
+
+```powershell
+docker compose -f docker-compose.registry.yml pull
+docker compose -f docker-compose.registry.yml up -d
+```
+
+Le workflow CI s'exécute aussi sur les pull requests, mais la publication
+GHCR est réservée aux pushes sur `main`. Si les packages GHCR sont privés,
+`docker login ghcr.io` demandera un token GitHub avec la permission
+`read:packages`. Si les packages sont publics, cette connexion n'est pas
+nécessaire pour le téléchargement.
+
 Vérifier les installations :
 
 ```bash
