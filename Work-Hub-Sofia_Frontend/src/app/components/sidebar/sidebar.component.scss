@@ -69,11 +69,17 @@
 
 /* Brand Image */
 .navbar-brand-img {
+  display: block;
+  width: auto;
+  max-width: 150px;
+  height: auto;
+  max-height: 58px;
+  object-fit: contain;
   transition: transform 0.2s ease-out;
 }
 
 .navbar-brand-img:hover {
-  transform: scale(1.2);
+  transform: scale(1.05);
 }
 
 /* Dropdown Menu */
@@ -165,6 +171,64 @@
   left: var(--sidebar-width-minimized);
 }
 
+.navbar-collapse {
+  display: flex !important;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.navbar-collapse > .navbar-nav {
+  display: flex !important;
+  flex: 1 1 auto;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0.5rem 0 1rem;
+}
+
+.navbar-collapse > .navbar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+
+.navbar-collapse > .navbar-nav::-webkit-scrollbar-thumb {
+  background: #d8d8d8;
+  border-radius: 4px;
+}
+
+.navbar-collapse > hr {
+  flex: 0 0 auto;
+  width: 100%;
+  margin: 0.75rem 0;
+}
+
+.navbar-collapse .nav-item,
+.navbar-collapse .nav-link {
+  flex: 0 0 auto;
+}
+
+.navbar-collapse .nav-link {
+  min-height: 42px;
+}
+
+.navbar-collapse.collapse,
+.navbar-collapse.collapsing,
+.navbar-collapse.show {
+  display: flex !important;
+  height: auto !important;
+  max-height: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Legacy selector retained for templates that still use collapse. */
 .collapse.navbar-collapse {
   overflow: hidden !important;
   display: flex !important;
@@ -188,6 +252,18 @@
   height: 100%;
 }
 
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  overflow: hidden;
+}
+
+.navbar-collapse-header {
+  display: none !important;
+}
+
 .mobile-close-button {
   display: none;
 }
@@ -199,7 +275,19 @@
     }
 
     .navbar-brand {
-      margin: 0 auto;
+      display: flex !important;
+      min-height: 72px;
+    }
+
+    .navbar-collapse {
+      display: flex !important;
+      flex-direction: column;
+      flex: 1 1 auto;
+      height: auto !important;
+      max-height: none !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      overflow: hidden !important;
     }
 
     .mobile-close-button {

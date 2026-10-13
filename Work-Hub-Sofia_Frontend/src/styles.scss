@@ -72,6 +72,12 @@ ngb-datepicker .ngb-dp-arrow .btn-link:hover {
     min-width: 0;
   }
 
+  app-admin-layout.sidebar-minimized .main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
   html,
   body {
     overflow-x: hidden;

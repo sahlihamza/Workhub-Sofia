@@ -1,5 +1,6 @@
 import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 
 declare interface RouteInfo {
@@ -65,9 +66,9 @@ export class SidebarComponent implements OnInit {
     const token = localStorage.getItem('access_token');
     if (!token) return '';
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return payload.role || '';
-    } catch (e) {
+      const payload = jwtDecode<{ role?: string }>(token);
+      return (payload.role || '').trim().toLowerCase();
+    } catch {
       return '';
     }
   }
