@@ -166,6 +166,13 @@ docker compose -f docker-compose.registry.yml pull
 docker compose -f docker-compose.registry.yml up -d
 ```
 
+Ces commandes sont également regroupées dans le script
+[`update-docker.ps1`](./update-docker.ps1). Depuis PowerShell, lancer :
+
+```powershell
+.\update-docker.ps1
+```
+
 Le workflow CI s'exécute aussi sur les pull requests, mais la publication
 GHCR est réservée aux pushes sur `main`. Si les packages GHCR sont privés,
 `docker login ghcr.io` demandera un token GitHub avec la permission
