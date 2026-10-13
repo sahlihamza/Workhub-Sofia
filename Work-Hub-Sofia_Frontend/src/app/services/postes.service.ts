@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {Department} from "./departement.service";
+import { environment } from '../../environments/environment';
 
 export interface Poste {
   id: number;
@@ -15,7 +16,7 @@ export interface Poste {
 })
 export class PostesService {
 
-  private apiUrl = 'http://localhost:3000/postes';
+  private apiUrl = `${environment.apiUrl}/postes`;
 
   constructor(private http: HttpClient) { }
 

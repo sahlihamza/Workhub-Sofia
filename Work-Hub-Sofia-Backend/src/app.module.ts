@@ -22,11 +22,11 @@ import { CampaignsModule } from './campaigns/campaigns.module';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         type: 'mysql',
-        host: 'localhost',
-        port: 3306,
-        username: 'root',
-        password: '',
-        database: 'WorkHubSofia',
+        host: config.get<string>('DB_HOST', 'localhost'),
+        port: Number(config.get<string>('DB_PORT', '3306')),
+        username: config.get<string>('DB_USERNAME', 'root'),
+        password: config.get<string>('DB_PASSWORD', ''),
+        database: config.get<string>('DB_DATABASE', 'WorkHubSofia'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         migrations: [__dirname + '/migrations/*{.ts,.js}'],
         extra: {

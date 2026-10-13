@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpParams, HttpHeaders, HttpResponse} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ScheduleEntry } from '../models/schedule-entry.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ScheduleService {
-  private apiUrl = 'http://localhost:3000/planning';
+  private apiUrl = `${environment.apiUrl}/planning`;
 
   constructor(private http: HttpClient) {}
 

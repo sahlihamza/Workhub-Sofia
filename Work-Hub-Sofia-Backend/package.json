@@ -19,6 +19,7 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed:superadmin": "ts-node -r tsconfig-paths/register src/seeds/create-superadmin.seed.ts",
+    "seed:superadmin:reset": "ts-node -r tsconfig-paths/register src/seeds/reset-superadmin-password.seed.ts",
     "seed:superadmin:fresh": "$env:DB_SYNCHRONIZE='true'; ts-node -r tsconfig-paths/register src/seeds/create-superadmin.seed.ts",
     "seed": "ts-node -r tsconfig-paths/register src/seeds/seed-database.ts"
   },

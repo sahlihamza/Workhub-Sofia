@@ -47,9 +47,7 @@
                   "minify": false,
                   "inlineCritical": false
                 },
-                "fonts": {
-                  "inlining": false
-                }
+                "fonts": false
               },
               "outputHashing": "all",
               "sourceMap": false,

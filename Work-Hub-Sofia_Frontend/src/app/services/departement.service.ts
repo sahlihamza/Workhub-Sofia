@@ -4,6 +4,7 @@ import {Observable, of} from 'rxjs';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 export interface Department {
   id: number;
@@ -18,7 +19,7 @@ export interface Department {
   providedIn: 'root'
 })
 export class DepartementService {
-  private apiUrl = 'http://localhost:3000/departement';
+  private apiUrl = `${environment.apiUrl}/departement`;
 
   constructor(private http: HttpClient) { }
 

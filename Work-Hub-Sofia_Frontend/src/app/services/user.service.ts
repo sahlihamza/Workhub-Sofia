@@ -2,14 +2,15 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { User } from '../models/user.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  private apiUrl = 'http://localhost:3000/auth';
-  private apiUrlUser = 'http://localhost:3000/user';
+  private apiUrl = `${environment.apiUrl}/auth`;
+  private apiUrlUser = `${environment.apiUrl}/user`;
 
   constructor(private http: HttpClient) {}
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 // Interface is defined inside the service file, like your example
 export interface Campaign {
@@ -17,7 +18,7 @@ export interface Campaign {
 })
 export class CampaignService {
   // API URL matches your pattern
-  private apiUrl = 'http://localhost:3000/campaigns';
+  private apiUrl = `${environment.apiUrl}/campaigns`;
 
   constructor(private http: HttpClient) { }
 
