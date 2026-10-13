@@ -21,6 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Prepare Compose validation environment
+        run: |
+          printf 'MYSQL_ROOT_PASSWORD=\nMYSQL_DATABASE=WorkHubSofia\nMYSQL_USER=\nMYSQL_PASSWORD=\n' > .env
+
       - name: Validate Compose files
         run: docker compose -f docker-compose.registry.yml config
 
